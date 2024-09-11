@@ -1,17 +1,33 @@
-import { useEffect, useState } from 'react';
-import { ImageBackground, Text, View, ScrollView } from 'react-native';
+import { useEffect, useState } from "react";
+import {
+  Dimensions,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
-import { styles } from './styles';
+import bg from "@assets/background.png";
 import Logo from "@assets/logo.svg";
-import bg from '@assets/background.png';
+import { styles } from "./styles";
 
-import { useCity } from '@hooks/useCity';
-import { CityProps, getCityByNameService } from '@services/getCityByNameService';
+import { useCity } from "@hooks/useCity";
+import {
+  CityProps,
+  getCityByNameService,
+} from "@services/getCityByNameService";
 
-import { SelectList } from '@components/SelectList';
+import { SelectList } from "@components/SelectList";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const dimensions = Dimensions.get("window");
 
 export function Search() {
-  const [search, setSearch] = useState('');
+  const { top } = useSafeAreaInsets();
+
+  const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cities, setCities] = useState<CityProps[]>([]);
 
@@ -37,27 +53,42 @@ export function Search() {
   }, [search]);
 
   return (
-    <ScrollView>
-      <ImageBackground source={bg} defaultSource={bg} style={styles.container} resizeMode="cover">
+    <ScrollView style={styles.scroll}>
+      <ImageBackground
+        source={bg}
+        defaultSource={bg}
+        style={[styles.container, { height: dimensions.height - top }]}
+        resizeMode="cover"
+      >
         <Logo width={186} height={32} />
 
-        <View style={styles.content}>
-          <Text style={styles.title}>
-            Boas vindas ao <Text style={styles.brand}>iWeather</Text>
-          </Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? -40 : -180}
+        >
+          <View style={styles.content}>
+            <View>
+              <Text style={styles.title}>
+                Boas vindas ao <Text style={styles.brand}>iWeather</Text>
+              </Text>
+            </View>
 
-          <Text style={styles.subtitle}>
-            Escolha um local para ver a previsão do tempo
-          </Text>
+            <View>
+              <Text style={styles.subtitle}>
+                Escolha um local para ver a previsão do tempo
+              </Text>
+            </View>
 
-          <SelectList
-            data={cities}
-            onChange={setSearch}
-            isLoading={isLoading}
-            onPress={handleChanceCity}
-            placeholder="Buscar local"
-          />
-        </View>
+            <SelectList
+              data={cities}
+              onChange={setSearch}
+              isLoading={isLoading}
+              onPress={handleChanceCity}
+              placeholder="Buscar local"
+            />
+          </View>
+        </KeyboardAvoidingView>
       </ImageBackground>
     </ScrollView>
   );
