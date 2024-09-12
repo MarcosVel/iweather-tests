@@ -15,6 +15,13 @@ describe("Component: SelectList", () => {
     const selectedCity = screen.getByText(/sao/i);
     fireEvent.press(selectedCity);
 
-    expect(onPress).toHaveBeenCalledWith(data[1]);
+    expect(onPress).toHaveBeenCalledWith(data[0]);
+  });
+
+  it("should not show options when data props is empty", () => {
+    render(<SelectList data={[]} onChange={() => {}} onPress={() => {}} />);
+
+    const options = screen.getByTestId("options");
+    expect(options.children).toHaveLength(0);
   });
 });
