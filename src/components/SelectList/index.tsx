@@ -23,7 +23,7 @@ export function SelectList(props: Props) {
         value={props.value}
       />
 
-      <View style={styles.options}>
+      <View testID='options' style={styles.options}>
         {
           props.data.map((item) => (
             <TouchableOpacity
