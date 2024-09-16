@@ -1,6 +1,8 @@
+import { mockWeatherAPIResponse } from "@__tests__/mocks/mockWeatherAPIResponse";
 import { render } from "@__tests__/utils/customRender";
 import { saveStorageCity } from "@libs/asyncStorage/cityStorage";
-import { screen, waitFor } from "@testing-library/react-native";
+import { api } from "@services/api";
+import { act, screen, waitFor } from "@testing-library/react-native";
 import { Routes } from ".";
 
 describe("Routes", () => {
@@ -12,6 +14,8 @@ describe("Routes", () => {
   });
 
   it("should render Dashboard screen when city is selected", async () => {
+    jest.spyOn(api, "get").mockResolvedValue({ data: mockWeatherAPIResponse });
+
     const city = {
       id: "1",
       name: "Varginha",
@@ -21,7 +25,9 @@ describe("Routes", () => {
 
     await saveStorageCity(city);
 
-    const { debug } = render(<Routes />);
-    debug();
+    await act(() => waitFor(() => render(<Routes />)));
+
+    const title = screen.getByText(city.name);
+    expect(title).toBeTruthy();
   });
 });
