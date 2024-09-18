@@ -1,6 +1,8 @@
 import { mockCityAPIResponse } from "@__tests__/mocks/mockCityAPIResponse";
 import { mockWeatherAPIResponse } from "@__tests__/mocks/mockWeatherAPIResponse";
 import {
+  act,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -55,5 +57,22 @@ describe("Screen: Dashboard", () => {
     render(<Dashboard />);
 
     await waitForElementToBeRemoved(() => screen.queryByTestId("loading"));
+
+    const cityName = "Sao Paulo";
+
+    await waitFor(() =>
+      act(() => {
+        const search = screen.getByTestId("search-input");
+        fireEvent.changeText(search, cityName);
+      })
+    );
+
+    await waitFor(() =>
+      act(() => {
+        fireEvent.press(screen.getByText(cityName, { exact: false }));
+      })
+    );
+
+    expect(screen.getByText(cityName, { exact: false })).toBeTruthy();
   });
 });
