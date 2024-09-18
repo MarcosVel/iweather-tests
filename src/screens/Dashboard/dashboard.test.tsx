@@ -13,9 +13,7 @@ import { api } from "@services/api";
 import { Dashboard } from ".";
 
 describe("Screen: Dashboard", () => {
-  it("should show city weather", async () => {
-    jest.spyOn(api, "get").mockResolvedValue({ data: mockWeatherAPIResponse });
-
+  beforeAll(async () => {
     const city = {
       id: "1",
       name: "Varginha, MG",
@@ -24,6 +22,10 @@ describe("Screen: Dashboard", () => {
     };
 
     await saveStorageCity(city);
+  });
+
+  it("should show city weather", async () => {
+    jest.spyOn(api, "get").mockResolvedValue({ data: mockWeatherAPIResponse });
 
     render(<Dashboard />);
 
@@ -32,15 +34,6 @@ describe("Screen: Dashboard", () => {
   });
 
   it("should show another selected city weather.", async () => {
-    const city = {
-      id: "1",
-      name: "Varginha, MG",
-      latitude: 123,
-      longitude: 456,
-    };
-
-    await saveStorageCity(city);
-
     /**
      * Need to:
      * 1 - fetch weather info of the first selected city
